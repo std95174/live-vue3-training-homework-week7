@@ -1,4 +1,5 @@
 <template>
+  <h1>商品總覽</h1>
   <div class="container mt-3">
     <div class="text-end">
       <button

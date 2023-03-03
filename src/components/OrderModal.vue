@@ -121,6 +121,7 @@ export default {
       return total;
     },
     async updateOrder() {
+      let loader = this.$loading.show()
       const {data} = await this.axios.put(`${VITE_API_URL}/api/${VITE_API_PATH}/admin/order/${this.order.id}`, {
             data: this.order
           },
@@ -129,6 +130,7 @@ export default {
               'Authorization': getToken(),
             }
           })
+      loader.hide()
       if (data.success) {
         this.$swal({
           title: '訂單更新成功',

@@ -1,5 +1,5 @@
 <template>
-  <h1>這是訂單頁面</h1>
+  <h1>訂單總覽</h1>
   <!--  bs table-->
   <table class="table">
     <thead>
@@ -112,12 +112,14 @@ export default {
       }
     },
     async getOrders() {
+      let loader = this.$loading.show()
       const {data} = await axios.get(`${VITE_API_URL}/api/${VITE_API_PATH}/admin/orders`, {
         headers: {
           Authorization: `${getToken()}`
         }
       })
       this.orders = data.orders
+      loader.hide()
     },
     setOrders(orders) {
       this.orders = orders

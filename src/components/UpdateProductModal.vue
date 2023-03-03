@@ -282,12 +282,12 @@ export default {
             await adminProductStore().getProducts()
           }
           this.$swal({
-            title: '產品新增成功',
+            title: '產品更新成功',
             icon: 'success',
           })
         } catch (e) {
           this.$swal({
-            title: '產品新增失敗',
+            title: '產品更新失敗',
             icon: 'success',
           })
         }
@@ -320,7 +320,7 @@ export default {
       } catch (e) {
         this.$swal({
           title: '圖片上傳失敗，請重新上傳',
-          icon: 'success',
+          icon: 'error',
         })
       } finally {
         loader.hide()
