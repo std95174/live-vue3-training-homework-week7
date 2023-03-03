@@ -22,38 +22,38 @@
         <div class="modal-body">
           <div class="row">
             <div class="card">
-              <div class="card-header">
-                <h5 class="card-title">訂單詳細內容</h5>
-              </div>
               <div class="card-body">
                 <div class="row mb-3">
                   <div class="col-md-4">
-                    <strong>訂單編號：</strong> {{ order.id }}
+                    <strong>訂單編號：</strong> {{ selectedOrder.id }}
                   </div>
                   <div class="col-md-4">
-                    <strong>訂單日期：</strong> {{ order.create_at }}
+                    <strong>訂單日期：</strong> {{ selectedOrder.create_at }}
                   </div>
                   <div class="col-md-4">
-                    <strong>訂單狀態：</strong> {{ order.is_paid ? '已付款' : '未付款' }}
-                  </div>
-                </div>
-                <div class="row mb-3">
-                  <div class="col-md-4">
-                    <strong>客戶姓名：</strong> {{ order.user?.name }}
-                  </div>
-                  <div class="col-md-4">
-                    <strong>客戶電話：</strong> {{ order.user?.tel }}
-                  </div>
-                  <div class="col-md-4">
-                    <strong>客戶地址：</strong> {{ order.user?.address }}
+                    <strong>訂單狀態：</strong>
+                    <span class="badge rounded-pill" :class="selectedOrder.is_paid?'bg-success':'bg-danger'">{{
+                        selectedOrder.is_paid ? '已付款' : '未付款'
+                      }}</span>
                   </div>
                 </div>
                 <div class="row mb-3">
                   <div class="col-md-4">
-                    <strong>客戶信箱：</strong> {{ order.user?.email }}
+                    <strong>客戶姓名：</strong> {{ selectedOrder.user?.name }}
+                  </div>
+                  <div class="col-md-4">
+                    <strong>客戶電話：</strong> {{ selectedOrder.user?.tel }}
+                  </div>
+                  <div class="col-md-4">
+                    <strong>客戶地址：</strong> {{ selectedOrder.user?.address }}
+                  </div>
+                </div>
+                <div class="row mb-3">
+                  <div class="col-md-4">
+                    <strong>客戶信箱：</strong> {{ selectedOrder.user?.email }}
                   </div>
                   <div class="col-md-8">
-                    <strong>留言：</strong> {{ order.message }}
+                    <strong>留言：</strong> {{ selectedOrder.message }}
                   </div>
                 </div>
                 <table class="table table-striped">
@@ -63,14 +63,18 @@
                     <th>數量</th>
                     <th>單價</th>
                     <th>小計</th>
+                    <th></th>
                   </tr>
                   </thead>
                   <tbody>
-                  <tr v-for="item in order.products" :key="item.id">
-                    <td>{{ item.product_id }}</td>
+                  <tr v-for="item in selectedOrder.products" :key="item.id">
+                    <td>{{ item.product?.title }}</td>
                     <td>{{ item.qty }}</td>
-                    <td>{{ item.price }}</td>
-                    <td>{{ item.price * item.qty }}</td>
+                    <td>{{ item.product?.price }}</td>
+                    <td>{{ item.final_total }}</td>
+                    <td>
+                      <button class="btn btn-close btn-sm" @click="removeProduct(item)"></button>
+                    </td>
                   </tr>
                   </tbody>
                 </table>
@@ -79,7 +83,8 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" @click="calculateTotal">關閉</button>
+          <button type="button" class="btn btn-primary" @click="updateOrder">更新</button>
         </div>
       </div>
     </div>
@@ -87,19 +92,62 @@
 </template>
 
 <script>
+import {getToken} from "@/common/token";
+
+const {VITE_API_URL, VITE_API_PATH} = import.meta.env;
 export default {
   name: "OrderModal",
   data() {
     return {
-      modal:{}
+      modal: {},
     }
   },
-  props:{
-    order: {
+  props: {
+    selectedOrder: {
       type: Object,
       required: true
     }
   },
+  methods: {
+    removeProduct(product) {
+      delete this.order.products[product.id]
+      this.order.total = this.calculateTotal()
+    },
+    calculateTotal() {
+      let total = 0
+      for (let productId in this.order.products) {
+        total += this.order.products[productId].final_total;
+      }
+      return total;
+    },
+    async updateOrder() {
+      const {data} = await this.axios.put(`${VITE_API_URL}/api/${VITE_API_PATH}/admin/order/${this.order.id}`, {
+            data: this.order
+          },
+          {
+            headers: {
+              'Authorization': getToken(),
+            }
+          })
+      if (data.success) {
+        this.$swal({
+          title: '訂單更新成功',
+          icon: 'success',
+        })
+        this.$emit('update-order')
+      } else {
+        this.$swal({
+          title: '訂單更新失敗',
+          icon: 'error',
+        })
+      }
+    }
+  },
+  computed: {
+    order() {
+      return {...this.selectedOrder}
+    }
+  }
 }
 </script>
 

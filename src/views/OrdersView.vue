@@ -28,14 +28,14 @@
       </td>
       <td>
 <!--        bs5 button to open modal-->
-        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#orderModal" @click="selectedOrder = order">詳細資料</button>
+        <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#orderModal" @click="selectedOrder = order">詳細資料</button>
         <button type="button" class="btn btn-outline-danger" @click="deleteOrder(order)">刪除</button>
       </td>
     </tr>
     </tbody>
   </table>
   <order-pagination @page-changed="setOrders"></order-pagination>
-  <order-modal :order="selectedOrder"></order-modal>
+  <order-modal :selected-order="selectedOrder" @update-order="getOrders"></order-modal>
 </template>
 
 <script>
@@ -75,7 +75,7 @@ export default {
         if (data.success) {
           loader.hide()
           this.$swal({
-            title: '已調整付款狀態',
+            title: '已刪除訂單',
             icon: 'success',
           })
           await this.getOrders()
