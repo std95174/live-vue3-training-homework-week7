@@ -2,6 +2,7 @@ import {defineStore} from 'pinia'
 import axios from 'axios'
 import {getToken} from '@/common/token'
 
+const {VITE_API_URL, VITE_API_PATH} = import.meta.env;
 export const adminProductStore = defineStore('adminProductStore', {
     state: () => ({
         products: [],
@@ -31,7 +32,7 @@ export const adminProductStore = defineStore('adminProductStore', {
         async getProducts(page = 1) {
             try {
                 const {data} = await axios.get(
-                    `${import.meta.env.VITE_API_URL}/admin/products?page=${page}`,
+                    `${VITE_API_URL}/api/${VITE_API_PATH}/admin/products?page=${page}`,
                     {headers: {Authorization: `${getToken()}`}}
                 )
                 this.products = data.products
