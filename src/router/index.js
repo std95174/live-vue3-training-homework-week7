@@ -18,6 +18,11 @@ const router = createRouter({
             meta: {requiresAuth: true},
             children: [
                 {
+                    path: '',
+                    name: 'dashboard',
+                    component: () => import('../views/DashboardView.vue')
+                },
+                {
                     path: '/products',
                     name: 'products',
                     component: () => import('../views/ProductsView.vue')
@@ -26,6 +31,11 @@ const router = createRouter({
                     path: '/orders',
                     name: 'orders',
                     component: () => import('../views/OrdersView.vue')
+                },
+                {
+                    path: '/order/:id',
+                    name: 'order',
+                    component: () => import('../views/OrderView.vue')
                 },
             ]
         },
