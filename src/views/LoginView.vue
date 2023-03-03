@@ -22,14 +22,6 @@
                      :class="{'is-invalid': errors['密碼']}"
                      placeholder="請輸入密碼" rules="required" v-model="user.password"></v-field>
             <error-message name="密碼" class="invalid-feedback"></error-message>
-            <!--            <input-->
-            <!--                type="password"-->
-            <!--                class="form-control"-->
-            <!--                id="password"-->
-            <!--                @keydown.enter="login"-->
-            <!--                placeholder="請輸入密碼"-->
-            <!--                v-model="user.password"-->
-            <!--            />-->
           </div>
           <div class="text-center">
             <button type="submit" class="btn btn-primary">
